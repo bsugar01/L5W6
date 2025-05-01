@@ -9,7 +9,7 @@
     <h1 style="color: red;">Students List</h1>
     <ul>
         <% students.forEach(student => { %>
-            <li><a href="/student/<%= student._id %>"><%= student.name %> - <%= student.course %></a></li>
+            <li><a href="/student/<%= student._id %>"><%= student.name %> - <%= student.illness %>  - <%= student.roomNumber %></a></li>
         <% }) %>
     </ul>
 

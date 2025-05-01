@@ -5,7 +5,7 @@ const methodOverride = require("method-override");
 const app = express();
 
 mongoose
-  .connect("mongodb://20.0.153.128:10999/studentsDB", {
+  .connect("mongodb://20.0.153.128:10999/sagar01DB", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 
-const studentSchema = new mongoose.Schema({ name: String, age: Number, course: String });
+const studentSchema = new mongoose.Schema({ name: String,
+  age: Number,
+  illness: String,
+  roomNumber: String,});
 const Student = mongoose.model("Student", studentSchema);
 
 app.get("/", (req, res) => {
@@ -39,7 +42,7 @@ app.get("/student/new", (req, res) => {
 
 app.post("/student", async (req, res) => {
   try {
-    const newStudent = new Student({ name: req.body.name, age: req.body.age, course: req.body.course });
+    const newStudent = new Student({ name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber });
     await newStudent.save();
     res.redirect("/students");
   } catch (error) {
@@ -71,7 +74,7 @@ app.put("/student/:id", async (req, res) => {
   try {
     const student = await Student.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name, age: req.body.age, course: req.body.course },
+      { name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber },
       { new: true }
     );
     if (!student) return res.status(404).send("Student Not Found");
@@ -91,4 +94,4 @@ app.delete("/student/:id", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Server is running on port 3000"));
+app.listen(10020, () => console.log("Server is running on port 3000"));
