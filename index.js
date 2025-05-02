@@ -66,14 +66,17 @@ app.post("/patient", async (req, res) => {
 // View a single patient
 app.get("/patient/:id", async (req, res) => {
   try {
+    console.log("Fetching patient with ID:", req.params.id); // 👈 Log ID
     const patient = await Patient.findById(req.params.id);
+    console.log("Found patient:", patient); // 👈 Log result
     if (!patient) return res.status(404).send("Patient Not Found");
     res.render("patient", { patient });
   } catch (error) {
-    console.error(error);
+    console.error("Error in /patient/:id route:", error); // 👈 Log error details
     res.status(500).send("Error fetching patient");
   }
 });
+
 
 // Edit patient form
 app.get("/patient/:id/edit", async (req, res) => {
