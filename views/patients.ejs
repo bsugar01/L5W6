@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>patients List</title>
-</head>
-<body>
-    <h1 style="color: red;">patients List</h1>
-    <ul>
-        <% patients.forEach(patient => { %>
-            <li><a href="/patient/<%= patient._id %>"><%= patient.name %> - <%= patient.illness %>  - <%= patient.roomNumber %></a></li>
-        <% }) %>
-    </ul>
-
-    <a href="/patient/new">Add New patient</a>
-</body>
-</html>
+<ul>
+    <% patients.forEach(patient => { %>
+      <li>
+        <a href="/patient/<%= patient._id %>">
+          <%= patient.name %> - <%= patient.illness %> - Room <%= patient.roomNumber %>
+          <% if (patient.isolationRequired) { %>
+            <strong style="color: red;">[Isolation]</strong>
+          <% } %>
+        </a>
+      </li>
+    <% }) %>
+  </ul>
+  

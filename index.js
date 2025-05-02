@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const app = express();
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose
   .connect("mongodb://20.0.153.128:10999/sagar01DB")
   .then(() => console.log("MongoDB Connected"))
@@ -22,10 +22,18 @@ const patientSchema = new mongoose.Schema({
   age: Number,
   illness: String,
   roomNumber: String,
+  isolationRequired: Boolean,  // ✅ NEW FIELD
+  admittedOn: {
+    type: Date,
+    default: Date.now
+  }
 });
+
 const Patient = mongoose.model("Patient", patientSchema);
 
 // Routes
+
+// Redirect root to /patients
 app.get("/", (req, res) => {
   res.redirect("/patients");
 });
@@ -41,20 +49,26 @@ app.get("/patients", async (req, res) => {
   }
 });
 
-// Form to add a new patient
+// Show form to add new patient
 app.get("/patient/new", (req, res) => {
   res.render("new_patient");
 });
 
-// Add new patient
+// Add new patient with isolation logic
 app.post("/patient", async (req, res) => {
   try {
+    const illness = req.body.illness || "";
+    const isolationKeywords = /(covid|flu|infection|virus|contagious)/i;
+    const isIsolationNeeded = isolationKeywords.test(illness);  // ✅ LOGIC
+
     const newPatient = new Patient({
       name: req.body.name,
       age: req.body.age,
       illness: req.body.illness,
       roomNumber: req.body.roomNumber,
+      isolationRequired: isIsolationNeeded
     });
+
     await newPatient.save();
     res.redirect("/patients");
   } catch (error) {
@@ -63,20 +77,17 @@ app.post("/patient", async (req, res) => {
   }
 });
 
-// View a single patient
+// View single patient
 app.get("/patient/:id", async (req, res) => {
   try {
-    console.log("Fetching patient with ID:", req.params.id); // 👈 Log ID
     const patient = await Patient.findById(req.params.id);
-    console.log("Found patient:", patient); // 👈 Log result
     if (!patient) return res.status(404).send("Patient Not Found");
     res.render("patient", { patient });
   } catch (error) {
-    console.error("Error in /patient/:id route:", error); // 👈 Log error details
+    console.error("Error fetching patient:", error);
     res.status(500).send("Error fetching patient");
   }
 });
-
 
 // Edit patient form
 app.get("/patient/:id/edit", async (req, res) => {
@@ -90,9 +101,13 @@ app.get("/patient/:id/edit", async (req, res) => {
   }
 });
 
-// Update patient
+// Update patient (manually preserve isolationRequired or re-check)
 app.put("/patient/:id", async (req, res) => {
   try {
+    const illness = req.body.illness || "";
+    const isolationKeywords = /(covid|flu|infection|virus|contagious)/i;
+    const isIsolationNeeded = isolationKeywords.test(illness);
+
     const patient = await Patient.findByIdAndUpdate(
       req.params.id,
       {
@@ -100,9 +115,11 @@ app.put("/patient/:id", async (req, res) => {
         age: req.body.age,
         illness: req.body.illness,
         roomNumber: req.body.roomNumber,
+        isolationRequired: isIsolationNeeded
       },
       { new: true }
     );
+
     if (!patient) return res.status(404).send("Patient Not Found");
     res.redirect("/patients");
   } catch (error) {
@@ -123,5 +140,5 @@ app.delete("/patient/:id", async (req, res) => {
   }
 });
 
-// Start server
+// Server start
 app.listen(10020, () => console.log("Server is running on port 10020"));

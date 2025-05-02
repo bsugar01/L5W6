@@ -12,6 +12,8 @@
     <p>Age: <%= patient.age %></p>
     <p>Illness: <%= patient.illness %></p>
     <p>roomNumber: <%= patient.roomNumber %></p>
+    <p>Isolation Required: <%= patient.isolationRequired ? "Yes" : "No" %></p>
+
 
     <a href="/patient/<%= patient._id %>/edit">Edit</a>
 
