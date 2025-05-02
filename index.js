@@ -17,80 +17,80 @@ app.use(express.json());
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 
-const studentSchema = new mongoose.Schema({ name: String,
+const patientSchema = new mongoose.Schema({ name: String,
   age: Number,
   illness: String,
   roomNumber: String,});
-const Student = mongoose.model("Student", studentSchema);
+const patient = mongoose.model("patient", patientSchema);
 
 app.get("/", (req, res) => {
-  res.redirect("/students");
+  res.redirect("/patients");
 });
 
-app.get("/students", async (req, res) => {
+app.get("/patients", async (req, res) => {
   try {
-    const students = await Student.find();
-    res.render("students", { students });
+    const patients = await patient.find();
+    res.render("patients", { patients });
   } catch (error) {
-    res.status(500).send("Error fetching students");
+    res.status(500).send("Error fetching patients");
   }
 });
 
-app.get("/student/new", (req, res) => {
-  res.render("new_student");
+app.get("/patient/new", (req, res) => {
+  res.render("new_patient");
 });
 
-app.post("/student", async (req, res) => {
+app.post("/patient", async (req, res) => {
   try {
-    const newStudent = new Student({ name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber });
-    await newStudent.save();
-    res.redirect("/students");
+    const newpatient = new patient({ name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber });
+    await newpatient.save();
+    res.redirect("/patients");
   } catch (error) {
-    res.status(500).send("Error adding student");
+    res.status(500).send("Error adding patient");
   }
 });
 
-app.get("/student/:id", async (req, res) => {
+app.get("/patient/:id", async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
-    if (!student) return res.status(404).send("Student Not Found");
-    res.render("student", { student });
+    const patient = await patient.findById(req.params.id);
+    if (!patient) return res.status(404).send("patient Not Found");
+    res.render("patient", { patient });
   } catch (error) {
-    res.status(500).send("Error fetching student");
+    res.status(500).send("Error fetching patient");
   }
 });
 
-app.get("/student/:id/edit", async (req, res) => {
+app.get("/patient/:id/edit", async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
-    if (!student) return res.status(404).send("Student Not Found");
-    res.render("edit_student", { student });
+    const patient = await patient.findById(req.params.id);
+    if (!patient) return res.status(404).send("patient Not Found");
+    res.render("edit_patient", { patient });
   } catch (error) {
-    res.status(500).send("Error fetching student");
+    res.status(500).send("Error fetching patient");
   }
 });
 
-app.put("/student/:id", async (req, res) => {
+app.put("/patient/:id", async (req, res) => {
   try {
-    const student = await Student.findByIdAndUpdate(
+    const patient = await patient.findByIdAndUpdate(
       req.params.id,
       { name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber },
       { new: true }
     );
-    if (!student) return res.status(404).send("Student Not Found");
-    res.redirect("/students");
+    if (!patient) return res.status(404).send("patient Not Found");
+    res.redirect("/patients");
   } catch (error) {
-    res.status(500).send("Error updating student");
+    res.status(500).send("Error updating patient");
   }
 });
 
-app.delete("/student/:id", async (req, res) => {
+app.delete("/patient/:id", async (req, res) => {
   try {
-    const student = await Student.findByIdAndDelete(req.params.id);
-    if (!student) return res.status(404).send("Student Not Found");
-    res.redirect("/students");
+    const patient = await patient.findByIdAndDelete(req.params.id);
+    if (!patient) return res.status(404).send("patient Not Found");
+    res.redirect("/patients");
   } catch (error) {
-    res.status(500).send("Error deleting student");
+    res.status(500).send("Error deleting patient");
   }
 });
 
