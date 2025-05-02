@@ -22,7 +22,7 @@ const patientSchema = new mongoose.Schema({
   age: Number,
   illness: String,
   roomNumber: String,
-  isolationRequired: Boolean,  // ✅ NEW FIELD
+  isolationRequired: Boolean,
   admittedOn: {
     type: Date,
     default: Date.now
@@ -54,12 +54,10 @@ app.get("/patient/new", (req, res) => {
   res.render("new_patient");
 });
 
-// Add new patient with isolation logic
+// Add new patient (checkbox-based isolationRequired)
 app.post("/patient", async (req, res) => {
   try {
-    const illness = req.body.illness || "";
-    const isolationKeywords = /(covid|flu|infection|virus|contagious)/i;
-    const isIsolationNeeded = isolationKeywords.test(illness);  // ✅ LOGIC
+    const isIsolationNeeded = req.body.isolationRequired === 'true';
 
     const newPatient = new Patient({
       name: req.body.name,
@@ -101,12 +99,10 @@ app.get("/patient/:id/edit", async (req, res) => {
   }
 });
 
-// Update patient (manually preserve isolationRequired or re-check)
+// Update patient (checkbox-based isolationRequired)
 app.put("/patient/:id", async (req, res) => {
   try {
-    const illness = req.body.illness || "";
-    const isolationKeywords = /(covid|flu|infection|virus|contagious)/i;
-    const isIsolationNeeded = isolationKeywords.test(illness);
+    const isIsolationNeeded = req.body.isolationRequired === 'true';
 
     const patient = await Patient.findByIdAndUpdate(
       req.params.id,
@@ -140,5 +136,5 @@ app.delete("/patient/:id", async (req, res) => {
   }
 });
 
-// Server start
+// Start server
 app.listen(10020, () => console.log("Server is running on port 10020"));

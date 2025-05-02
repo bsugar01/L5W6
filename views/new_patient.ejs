@@ -1,20 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New patient</title>
+  <title>Add New Patient</title>
 </head>
 <body>
-    <h1>Add a New patient</h1>
-    <form action="/patient" method="POST">
-        <input type="text" name="name" placeholder="Enter name" required>
-        <input type="number" name="age" placeholder="Enter age" required>
-        <input type="text" name="illness" placeholder="Enter illness" required>
-        <input type="text" name="roomNumber" placeholder="Enter roomNumber" required>
-        <button type="submit">Add patient</button>
-    </form>
-    <br>
-    <a href="/patients">Back to List</a>
+  <h1>Add New Patient</h1>
+  <form action="/patient" method="POST">
+    <label>Name:</label>
+    <input type="text" name="name" required><br><br>
+
+    <label>Age:</label>
+    <input type="number" name="age" required><br><br>
+
+    <label>Illness:</label>
+    <input type="text" name="illness" required><br><br>
+
+    <label>Room Number:</label>
+    <input type="text" name="roomNumber" required><br><br>
+
+    <label>Isolation Required:</label><br>
+    <!-- ✅ Always sends a value: "false" if not checked, "true" if checked -->
+    <input type="hidden" name="isolationRequired" value="false">
+    <input type="checkbox" name="isolationRequired" value="true"> Yes<br><br>
+
+    <button type="submit">Add Patient</button>
+  </form>
+  <br>
+  <a href="/patients">Back to Patient List</a>
 </body>
 </html>
