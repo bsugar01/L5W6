@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>patient Details</title>
+</head>
+<body>
+    <h1>patient Details</h1>
+    <p>ID: <%= patient._id %></p>
+    <p>Name: <%= patient.name %></p>
+    <p>Age: <%= patient.age %></p>
+    <p>Illness: <%= patient.illness %></p>
+    <p>roomNumber: <%= patient.roomNumber %></p>
+
+    <a href="/patient/<%= patient._id %>/edit">Edit</a>
+
+    <form action="/patient/<%= patient._id %>?_method=DELETE" method="POST">
+        <button type="submit">Delete</button>
+    </form>
+
+    <br>
+    <a href="/patients">Back to List</a>
+</body>
+</html>
