@@ -4,94 +4,121 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const app = express();
 
+// Connect to MongoDB
 mongoose
-  .connect("mongodb://20.0.153.128:10999/sagar01DB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect("mongodb://20.0.153.128:10999/sagar01DB")
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
+// Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 
-const patientSchema = new mongoose.Schema({ name: String,
+// Patient Schema
+const patientSchema = new mongoose.Schema({
+  name: String,
   age: Number,
   illness: String,
-  roomNumber: String,});
-const patient = mongoose.model("patient", patientSchema);
+  roomNumber: String,
+});
+const Patient = mongoose.model("Patient", patientSchema);
 
+// Routes
 app.get("/", (req, res) => {
   res.redirect("/patients");
 });
 
+// List all patients
 app.get("/patients", async (req, res) => {
   try {
-    const patients = await patient.find();
+    const patients = await Patient.find();
     res.render("patients", { patients });
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error fetching patients");
   }
 });
 
+// Form to add a new patient
 app.get("/patient/new", (req, res) => {
   res.render("new_patient");
 });
 
+// Add new patient
 app.post("/patient", async (req, res) => {
   try {
-    const newpatient = new patient({ name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber });
-    await newpatient.save();
+    const newPatient = new Patient({
+      name: req.body.name,
+      age: req.body.age,
+      illness: req.body.illness,
+      roomNumber: req.body.roomNumber,
+    });
+    await newPatient.save();
     res.redirect("/patients");
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error adding patient");
   }
 });
 
+// View a single patient
 app.get("/patient/:id", async (req, res) => {
   try {
-    const patient = await patient.findById(req.params.id);
-    if (!patient) return res.status(404).send("patient Not Found");
+    const patient = await Patient.findById(req.params.id);
+    if (!patient) return res.status(404).send("Patient Not Found");
     res.render("patient", { patient });
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error fetching patient");
   }
 });
 
+// Edit patient form
 app.get("/patient/:id/edit", async (req, res) => {
   try {
-    const patient = await patient.findById(req.params.id);
-    if (!patient) return res.status(404).send("patient Not Found");
+    const patient = await Patient.findById(req.params.id);
+    if (!patient) return res.status(404).send("Patient Not Found");
     res.render("edit_patient", { patient });
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error fetching patient");
   }
 });
 
+// Update patient
 app.put("/patient/:id", async (req, res) => {
   try {
-    const patient = await patient.findByIdAndUpdate(
+    const patient = await Patient.findByIdAndUpdate(
       req.params.id,
-      { name: req.body.name, age: req.body.age, illness: req.body.illness, roomNumber: req.body.roomNumber },
+      {
+        name: req.body.name,
+        age: req.body.age,
+        illness: req.body.illness,
+        roomNumber: req.body.roomNumber,
+      },
       { new: true }
     );
-    if (!patient) return res.status(404).send("patient Not Found");
+    if (!patient) return res.status(404).send("Patient Not Found");
     res.redirect("/patients");
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error updating patient");
   }
 });
 
+// Delete patient
 app.delete("/patient/:id", async (req, res) => {
   try {
-    const patient = await patient.findByIdAndDelete(req.params.id);
-    if (!patient) return res.status(404).send("patient Not Found");
+    const patient = await Patient.findByIdAndDelete(req.params.id);
+    if (!patient) return res.status(404).send("Patient Not Found");
     res.redirect("/patients");
   } catch (error) {
+    console.error(error);
     res.status(500).send("Error deleting patient");
   }
 });
 
-app.listen(10020, () => console.log("Server is running on port 3000"));
+// Start server
+app.listen(10020, () => console.log("Server is running on port 10020"));
